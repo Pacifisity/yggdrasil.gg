@@ -53,11 +53,16 @@ body {
 }
 
 .reader-panel.reading {
+  background: var(--panel);
   width: 100%;
   margin: 0;
   padding: 0;
+  border-top: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
   border-left: 0;
   border-right: 0;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 20px 50px rgba(2, 5, 12, 0.45);
 }
 
 .reader-frame {
