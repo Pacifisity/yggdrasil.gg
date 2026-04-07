@@ -30,6 +30,7 @@ lofiBtn.addEventListener("click", () => {
 const placeholderText = "Paste text here...";
 const DEFAULT_WPM = 500;
 const PARAGRAPH_BREAK = "\x00PARA\x00";
+const CHUNK_SIZE = 3;
 
 let words = [];
 let sourceWords = [];
@@ -112,40 +113,78 @@ function getFocalIndex(word) {
 
   let corePoint = 0;
 
-  if (length <= 1) corePoint = 0;
-  else if (length <= 5) corePoint = 1;
-  else if (length <= 9) corePoint = 2;
-  else if (length <= 13) corePoint = 3;
-  else corePoint = 4;
+  // Bias ORP toward the first third of the lexical core for faster recognition.
+  if (length <= 2) corePoint = 0;
+  else if (length <= 4) corePoint = 1;
+  else if (length <= 7) corePoint = 2;
+  else if (length <= 10) corePoint = 3;
+  else corePoint = Math.min(4, Math.floor(length * 0.33));
 
   return coreIndices[Math.min(corePoint, coreIndices.length - 1)];
 }
 
-function renderWord(word) {
-  const focalIndex = getFocalIndex(word);
+function renderChunk(chunkWords) {
+  const anchorWordIndex = Math.floor((chunkWords.length - 1) / 2);
   let focalSpan = null;
 
   // Reset transform so getBoundingClientRect gives unshifted positions
   wordDisplay.style.transform = "translate(0, -50%)";
   wordDisplay.innerHTML = "";
 
-  word.split("").forEach((char, index) => {
-    const span = document.createElement("span");
-    span.className = "word-char";
-    if (!/[A-Za-z0-9]/.test(char)) span.classList.add("punct");
-    span.textContent = char;
-    if (index === focalIndex) {
-      span.classList.add("focal");
-      focalSpan = span;
+  chunkWords.forEach((word, wordIndex) => {
+    const wordWrapper = document.createElement("span");
+    wordWrapper.className = "chunk-word";
+    const focalIndex = getFocalIndex(word);
+
+    word.split("").forEach((char, charIndex) => {
+      const span = document.createElement("span");
+      span.className = "word-char";
+      if (!/[A-Za-z0-9]/.test(char)) span.classList.add("punct");
+      span.textContent = char;
+      if (wordIndex === anchorWordIndex && charIndex === focalIndex) {
+        span.classList.add("focal");
+        focalSpan = span;
+      }
+      wordWrapper.appendChild(span);
+    });
+
+    wordDisplay.appendChild(wordWrapper);
+
+    if (wordIndex < chunkWords.length - 1) {
+      const space = document.createElement("span");
+      space.className = "chunk-gap";
+      space.textContent = " ";
+      wordDisplay.appendChild(space);
     }
-    wordDisplay.appendChild(span);
   });
 
-  // Measure exact pixel center of the focal character and shift so it lands on center
+  if (!focalSpan) {
+    focalSpan = wordDisplay.querySelector(".word-char");
+  }
+
+  if (!focalSpan) {
+    wordDisplay.style.transform = "translate(0, -50%)";
+    return;
+  }
+
+  // Keep focal alignment while clamping long chunks so they do not clip on narrow screens.
   const wordRect = wordDisplay.getBoundingClientRect();
   const spanRect = focalSpan.getBoundingClientRect();
+  const frameRect = wordDisplay.parentElement?.getBoundingClientRect();
   const spanCenter = spanRect.left - wordRect.left + spanRect.width / 2;
-  wordDisplay.style.transform = `translate(-${spanCenter}px, -50%)`;
+
+  let shiftX = -spanCenter;
+  if (frameRect) {
+    const gutter = Math.max(10, frameRect.width * 0.04);
+    const containerCenter = frameRect.width / 2;
+    const unclampedLeft = containerCenter + shiftX;
+    const minLeft = gutter;
+    const maxLeft = Math.max(gutter, frameRect.width - wordRect.width - gutter);
+    const clampedLeft = Math.min(maxLeft, Math.max(minLeft, unclampedLeft));
+    shiftX = clampedLeft - containerCenter;
+  }
+
+  wordDisplay.style.transform = `translate(${shiftX}px, -50%)`;
 }
 
 function baseDelayMs() {
@@ -188,6 +227,29 @@ function getDelayForWord(word) {
   return Math.round(base * mult);
 }
 
+function getDelayForChunk(chunkWords) {
+  const total = chunkWords.reduce((sum, word) => sum + getDelayForWord(word), 0);
+  // Small efficiency bonus: grouped context is processed slightly faster than isolated words.
+  return Math.round(total * 0.92);
+}
+
+function collectChunk(startIndex) {
+  const chunkWords = [];
+  let nextIndex = startIndex;
+
+  while (nextIndex < words.length && chunkWords.length < CHUNK_SIZE) {
+    const token = words[nextIndex];
+    if (token === PARAGRAPH_BREAK) {
+      break;
+    }
+
+    chunkWords.push(token);
+    nextIndex += 1;
+  }
+
+  return { chunkWords, nextIndex };
+}
+
 function stopPlayback() {
   if (timerId !== null) {
     window.clearTimeout(timerId);
@@ -220,19 +282,27 @@ function scheduleNext() {
     return;
   }
 
-  const currentWord = words[currentIndex];
-  currentIndex += 1;
+  const currentToken = words[currentIndex];
 
   // Paragraph break — blank display with a long breath pause
-  if (currentWord === PARAGRAPH_BREAK) {
+  if (currentToken === PARAGRAPH_BREAK) {
+    currentIndex += 1;
     wordDisplay.innerHTML = "";
     wordDisplay.style.transform = "translate(0, -50%)";
     timerId = window.setTimeout(scheduleNext, Math.round(baseDelayMs() * 2.8));
     return;
   }
 
-  renderWord(currentWord);
-  const delay = getDelayForWord(currentWord);
+  const { chunkWords, nextIndex } = collectChunk(currentIndex);
+  if (!chunkWords.length) {
+    currentIndex = nextIndex;
+    timerId = window.setTimeout(scheduleNext, baseDelayMs());
+    return;
+  }
+
+  currentIndex = nextIndex;
+  renderChunk(chunkWords);
+  const delay = getDelayForChunk(chunkWords);
   timerId = window.setTimeout(scheduleNext, delay);
 }
 

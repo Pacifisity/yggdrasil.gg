@@ -121,7 +121,7 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(0, -50%);
-  font: 500 clamp(2.2rem, 6.5vw, 4.2rem)/1 "Lexend", sans-serif;
+  font: 500 clamp(1.55rem, 6.2vw, 4.2rem)/1 "Lexend", sans-serif;
   letter-spacing: 0.03em;
   white-space: nowrap;
   opacity: 0;
@@ -301,5 +301,10 @@ body {
 @media (max-width: 900px) {
   .reader-frame {
     min-height: 180px;
+  }
+
+  .word-display {
+    font-size: clamp(1.25rem, 6.4vw, 2rem);
+    letter-spacing: 0.02em;
   }
 }
