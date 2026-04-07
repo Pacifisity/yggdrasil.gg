@@ -5,39 +5,28 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Freaky's Game</title>
 	<style>
-		html,
-		body {
+		html, body {
 			margin: 0;
 			width: 100%;
 			height: 100%;
+			overflow: hidden;
 			background: #000;
-			color: #f5f5f5;
-			font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
 		}
 
-		main {
-			min-height: 100%;
-			display: grid;
-			place-items: center;
-			padding: 24px;
-			text-align: center;
-		}
-
-		a {
-			color: #9ed0ff;
+		iframe {
+			border: 0;
+			width: 100%;
+			height: 100%;
+			display: block;
 		}
 	</style>
 </head>
 <body>
-	<main>
-		<div>
-			<p>Loading Freaky's Game...</p>
-			<p>If it does not open automatically, use <a href="https://cdn.jsdelivr.net/gh/Freaky-Bot/grotesque-Vissual-studio@main/dist/index.html">this link</a>.</p>
-		</div>
-	</main>
-	<script>
-		// Use the repo dist output directly, without htmlpreview or HTML rewriting.
-		window.location.replace("https://cdn.jsdelivr.net/gh/Freaky-Bot/grotesque-Vissual-studio@main/dist/index.html");
-	</script>
+	<iframe
+		src="https://raw.githack.com/Freaky-Bot/grotesque-Vissual-studio/main/dist/index.html"
+		title="Freaky's Game"
+		loading="eager"
+		allow="autoplay"
+	></iframe>
 </body>
 </html>
