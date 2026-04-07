@@ -1,0 +1,300 @@
+:root {
+  --bg: #030204;
+  --bg-accent: #120818;
+  --panel: rgba(18, 10, 28, 0.82);
+  --ink: #f2eaff;
+  --muted: #b7a4d1;
+  --signal: #c895ff;
+  --signal-soft: #2f1d40;
+  --line: #3b2b52;
+  --button: #9b5cff;
+  --button-hover: #7a38ea;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Chivo", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 8% 15%, #241237 0 12%, transparent 40%),
+    radial-gradient(circle at 92% 80%, #2e1550 0 10%, transparent 42%),
+    linear-gradient(135deg, var(--bg), var(--bg-accent));
+}
+
+.app-shell {
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding-bottom: 7rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.reader-panel {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  width: min(860px, 92vw);
+  margin: 0 auto;
+  padding: 1.25rem;
+  backdrop-filter: none;
+  box-shadow: none;
+  animation: rise 450ms ease both;
+  display: grid;
+  gap: 1rem;
+  min-height: clamp(300px, 46vh, 520px);
+  transition: width 180ms ease, margin 180ms ease, padding 180ms ease;
+}
+
+.reader-panel.reading {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border-left: 0;
+  border-right: 0;
+}
+
+.reader-frame {
+  position: relative;
+  min-height: clamp(300px, 42vh, 500px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.reader-input {
+  position: absolute;
+  inset: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(12, 8, 18, 0.58);
+  color: var(--ink);
+  padding: 1rem;
+  font: 500 1rem/1.5 "Chivo", sans-serif;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.reader-input::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.reader-input:focus {
+  outline: none;
+  border-color: var(--button);
+}
+
+.reader-panel.reading .reader-input {
+  display: none;
+}
+
+.center-guide {
+  position: absolute;
+  top: 12%;
+  bottom: 12%;
+  left: 50%;
+  width: 2px;
+  background: var(--signal-soft);
+  transform: translateX(-1px);
+  opacity: 0;
+}
+
+.reader-panel.reading .center-guide {
+  opacity: 1;
+}
+
+.word-display {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(0, -50%);
+  font: 500 clamp(2.2rem, 6.5vw, 4.2rem)/1 "Lexend", sans-serif;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  opacity: 0;
+}
+
+.reader-panel.reading .word-display {
+  opacity: 1;
+}
+
+.word-char {
+  opacity: 0.82;
+}
+
+.word-char.focal {
+  opacity: 1;
+  color: var(--signal);
+}
+
+/* Visually dim punctuation — it's structural, not semantic */
+.word-char.punct {
+  opacity: 0.45;
+  font-size: 0.85em;
+}
+
+.transport {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: min(180px, 92vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  justify-content: center;
+  padding: 0;
+  margin: 0 auto 1rem;
+  z-index: 30;
+}
+
+.wpm-input {
+  width: 62px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(12, 8, 18, 0.9);
+  color: var(--ink);
+  font: 600 0.9rem/1 "Lexend", sans-serif;
+  text-align: center;
+}
+
+.wpm-input:focus {
+  outline: none;
+  border-color: var(--button);
+}
+
+.play-btn {
+  border: 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: radial-gradient(circle at 30% 25%, #d1aeff 0 38%, var(--button) 70%);
+  box-shadow: inset 0 -6px 10px rgba(0, 0, 0, 0.25), 0 0 0 4px rgba(155, 92, 255, 0.22);
+  transition: transform 140ms ease, background 140ms ease;
+}
+
+.play-btn:hover {
+  transform: translateY(-1px) scale(1.02);
+  background: radial-gradient(circle at 30% 25%, #e2c9ff 0 42%, var(--button-hover) 75%);
+}
+
+.play-icon {
+  width: 0;
+  height: 0;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+  border-left: 16px solid #04101f;
+  margin-left: 2px;
+}
+
+.play-btn.is-playing .play-icon {
+  width: 16px;
+  height: 16px;
+  border: 0;
+  background:
+    linear-gradient(90deg, #04101f 0 40%, transparent 40% 60%, #04101f 60% 100%);
+  margin-left: 0;
+}
+
+.restart-player,
+.lofi-player {
+  position: fixed;
+  bottom: 1.2rem;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.restart-player {
+  left: 1.2rem;
+}
+
+.lofi-player {
+  right: 1.2rem;
+}
+
+/* Hide the actual iframe visually but keep it alive for audio */
+.lofi-player iframe {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.lofi-wave-icon {
+  display: none;
+}
+
+.lofi-btn.is-playing .lofi-mute-icon {
+  display: none;
+}
+
+.lofi-btn.is-playing .lofi-wave-icon {
+  display: block;
+}
+
+.lofi-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: rgba(12, 8, 18, 0.88);
+  color: var(--muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.lofi-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.restart-btn svg {
+  transform: translateX(-0.5px);
+}
+
+.lofi-btn:hover {
+  color: var(--ink);
+  border-color: var(--button);
+}
+
+.lofi-btn.is-playing {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .reader-frame {
+    min-height: 180px;
+  }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RSVP</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&family=Lexend:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="reader-panel">
+        <div class="reader-frame">
+          <div class="center-guide" aria-hidden="true"></div>
+          <div
+            id="source-text"
+            class="reader-input"
+            contenteditable="true"
+            spellcheck="false"
+            role="textbox"
+            aria-label="Text to read"
+          >
+            Paste text here...
+          </div>
+          <div id="word-display" class="word-display"></div>
+        </div>
+      </section>
+    </main>
+
+    <div class="restart-player">
+      <button id="restart-btn" class="lofi-btn restart-btn" type="button" aria-label="Restart reading" title="Restart reading">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 3-6.7"/>
+          <path d="M3 4v5h5"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Lofi girl stream -->
+    <div class="lofi-player">
+      <iframe
+        id="lofi-iframe"
+        src="about:blank"
+        allow="autoplay; encrypted-media"
+        allowfullscreen
+        title="Lofi girl stream"
+      ></iframe>
+      <button id="lofi-btn" class="lofi-btn" aria-label="Play music" title="Lofi music">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <!-- mute X -->
+          <g class="lofi-mute-icon">
+            <path d="M23 9l-6 6M17 9l6 6"/>
+          </g>
+          <!-- sound waves -->
+          <g class="lofi-wave-icon">
+            <path d="M15.5 8.5a5 5 0 0 1 0 7"/>
+            <path d="M19.5 6a9 9 0 0 1 0 12"/>
+          </g>
+        </svg>
+      </button>
+    </div>
+
+    <form id="rsvp-form" class="transport">
+      <input
+        id="wpm-input"
+        class="wpm-input"
+        type="text"
+        inputmode="numeric"
+        autocomplete="off"
+        spellcheck="false"
+        value="500"
+        aria-label="Words per minute"
+      />
+      <button type="submit" id="play-btn" class="play-btn" aria-label="Play">
+        <span class="play-icon" aria-hidden="true"></span>
+      </button>
+    </form>
+
+    <script src="script.js"></script>
+  </body>
+</html>
