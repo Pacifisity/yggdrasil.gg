@@ -7,7 +7,6 @@ const readerPanel = document.querySelector(".reader-panel");
 const restartBtn = document.getElementById("restart-btn");
 const lofiBtn = document.getElementById("lofi-btn");
 const lofiIframe = document.getElementById("lofi-iframe");
-const lofiMuteLine = document.getElementById("lofi-mute-line");
 
 const LOFI_SRC = "https://www.youtube.com/embed/jfKfPfyJRdk?autoplay=1&controls=0&loop=1&modestbranding=1&playsinline=1";
 let lofiPlaying = false;
@@ -17,12 +16,10 @@ lofiBtn.addEventListener("click", () => {
     lofiIframe.src = LOFI_SRC;
     lofiBtn.classList.add("is-playing");
     lofiBtn.setAttribute("aria-label", "Stop music");
-    lofiMuteLine.setAttribute("display", "none");
   } else {
     lofiIframe.src = "about:blank";
     lofiBtn.classList.remove("is-playing");
     lofiBtn.setAttribute("aria-label", "Play music");
-    lofiMuteLine.removeAttribute("display");
   }
   lofiPlaying = !lofiPlaying;
 });
