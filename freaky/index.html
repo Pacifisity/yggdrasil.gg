@@ -2,31 +2,22 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Freaky's Game</title>
-	<style>
-		html, body {
-			margin: 0;
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-			background: #000;
-		}
-
-		iframe {
-			border: 0;
-			width: 100%;
-			height: 100%;
-			display: block;
-		}
-	</style>
+	<title>Freaky's Games</title>
 </head>
 <body>
-	<iframe
-		src="https://raw.githack.com/Freaky-Bot/grotesque-Vissual-studio/main/dist/index.html"
-		title="Freaky's Game"
-		loading="eager"
-		allow="autoplay"
-	></iframe>
+	<script>
+		const games = {
+			cat: "https://htmlpreview.github.io/?https://github.com/Freaky-Bot/grotesque-Vissual-studio/blob/main/dist/index.html",
+			incremental: "https://htmlpreview.github.io/?https://github.com/Freaky-Bot/-incrimental-game/blob/main/dist/index.html",
+		};
+
+		const game = new URLSearchParams(location.search).keys().next().value;
+		const url = games[game];
+		if (url) {
+			window.location.replace(url);
+		} else {
+			document.write('<p>Available games: ' + Object.keys(games).map(k => '<a href="?' + k + '">' + k + '</a>').join(', ') + '</p>');
+		}
+	</script>
 </body>
 </html>
